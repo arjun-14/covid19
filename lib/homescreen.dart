@@ -12,6 +12,7 @@ class _HomeScreenState extends State<HomeScreen> {
   var active;
   var recovered;
   var deceased;
+  var lastUpdatedTime;
   @override
   void initState() {
     // TODO: implement initState
@@ -30,6 +31,7 @@ class _HomeScreenState extends State<HomeScreen> {
         active = body['statewise'][0]['active'];
         recovered = body['statewise'][0]['recovered'];
         deceased = body['statewise'][0]['deaths'];
+        lastUpdatedTime = body['statewise'][0]['lastupdatedtime'];
       });
   }
 
@@ -46,76 +48,84 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
       body: Container(
         child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Row(
+            padding: const EdgeInsets.all(10.0),
+          child: Column(
             children: <Widget>[
-              Expanded(
-                child: Column(
-                  children: <Widget>[
-                    Text('Confirmed',
-                    style: TextStyle(
-                      fontSize: 15,
-                      color: Colors.red,
-                    ),
-                   ),
-                    Text('$confirmed',
-                    style: TextStyle(
-                      fontSize: 23,
-                      color: Colors.red,
-                    ),),
-                  ],
-                ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text('Last updated on: ${lastUpdatedTime.toString().substring(0,5)} ${lastUpdatedTime.toString().substring(10,16)}'),
               ),
-              Expanded(
-                child: Column(
-                  children: <Widget>[
-                    Text('Active',
-                    style: TextStyle(
-                      fontSize: 15,
-                      color: Colors.blue,
-                    ),
-                    ),
-                    Text('$active',
-                    style: TextStyle(
-                      fontSize: 23,
-                      color: Colors.blue,
-                    ),),
-                  ],
-                ),
-              ),
-              Expanded(
-                child: Column(
-                  children: <Widget>[
-                    Text('Recovered',
-                      style: TextStyle(
+              Row(
+                children: <Widget>[
+                  Expanded(
+                    child: Column(
+                      children: <Widget>[
+                        Text('Confirmed',
+                        style: TextStyle(
                           fontSize: 15,
-                        color: Colors.green,
-                      ),
+                          color: Colors.red,
+                        ),
+                       ),
+                        Text('$confirmed',
+                        style: TextStyle(
+                          fontSize: 23,
+                          color: Colors.red,
+                        ),),
+                      ],
                     ),
-                    Text('$recovered',
-                    style: TextStyle(
-                      fontSize: 23,
-                      color: Colors.green,
-                    ),),
-                  ],
-                ),
-              ),
-              Expanded(
-                child: Column(
-                  children: <Widget>[
-                    Text('Deceased',
-                    style: TextStyle(
-                      fontSize: 15,
-                      color: Colors.grey,
+                  ),
+                  Expanded(
+                    child: Column(
+                      children: <Widget>[
+                        Text('Active',
+                        style: TextStyle(
+                          fontSize: 15,
+                          color: Colors.blue,
+                        ),
+                        ),
+                        Text('$active',
+                        style: TextStyle(
+                          fontSize: 23,
+                          color: Colors.blue,
+                        ),),
+                      ],
                     ),
-                   ),
-                    Text('$deceased',
-                    style: TextStyle(
-                      fontSize: 23,
-                      color: Colors.grey,
-                    ),)
-                  ],
-                ),
+                  ),
+                  Expanded(
+                    child: Column(
+                      children: <Widget>[
+                        Text('Recovered',
+                          style: TextStyle(
+                              fontSize: 15,
+                            color: Colors.green,
+                          ),
+                        ),
+                        Text('$recovered',
+                        style: TextStyle(
+                          fontSize: 23,
+                          color: Colors.green,
+                        ),),
+                      ],
+                    ),
+                  ),
+                  Expanded(
+                    child: Column(
+                      children: <Widget>[
+                        Text('Deceased',
+                        style: TextStyle(
+                          fontSize: 15,
+                          color: Colors.grey,
+                        ),
+                       ),
+                        Text('$deceased',
+                        style: TextStyle(
+                          fontSize: 23,
+                          color: Colors.grey,
+                        ),)
+                      ],
+                    ),
+                  ),
+                ],
               ),
             ],
           ),
