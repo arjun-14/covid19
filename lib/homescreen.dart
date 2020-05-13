@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:modal_progress_hud/modal_progress_hud.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -8,11 +9,15 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  var confirmed;
-  var active;
-  var recovered;
-  var deceased;
+  var body;
+  var confirmed = '0';
+  var active = '0';
+  var recovered = '0';
+  var deceased = '0';
   var lastUpdatedTime;
+  var lastUpdatedTimeDate;
+  bool loading = true;
+
   @override
   void initState() {
     // TODO: implement initState
@@ -24,20 +29,24 @@ class _HomeScreenState extends State<HomeScreen> {
     http.Response response =
         await http.get('https://api.covid19india.org/data.json');
     String data = response.body;
-    var body = (jsonDecode(data));
+    body = (jsonDecode(data));
     print(body['statewise'][0]);
-      setState(() {
-        confirmed = body['statewise'][0]['confirmed'];
-        active = body['statewise'][0]['active'];
-        recovered = body['statewise'][0]['recovered'];
-        deceased = body['statewise'][0]['deaths'];
-        lastUpdatedTime = body['statewise'][0]['lastupdatedtime'];
-      });
+    setState(() {
+      confirmed = body['statewise'][0]['confirmed'];
+      active = body['statewise'][0]['active'];
+      recovered = body['statewise'][0]['recovered'];
+      deceased = body['statewise'][0]['deaths'];
+      lastUpdatedTime = body['statewise'][0]['lastupdatedtime'];
+      lastUpdatedTimeDate = lastUpdatedTime.toString().substring(0, 5) +
+          lastUpdatedTime.toString().substring(10, 16);
+      loading = false;
+    });
+
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+     return Scaffold(
       appBar: AppBar(
         title: Text(
           'COVID19 INDIA',
@@ -48,88 +57,72 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
       body: Container(
         child: Padding(
-            padding: const EdgeInsets.all(10.0),
+          padding: const EdgeInsets.all(10.0),
           child: Column(
             children: <Widget>[
               Padding(
                 padding: const EdgeInsets.all(8.0),
-                child: Text('Last updated on: ${lastUpdatedTime.toString().substring(0,5)} ${lastUpdatedTime.toString().substring(10,16)}'),
+                //child: Text('temp'),
+                child: Text('Last updated on: $lastUpdatedTimeDate IST'),
               ),
               Row(
                 children: <Widget>[
-                  Expanded(
-                    child: Column(
-                      children: <Widget>[
-                        Text('Confirmed',
-                        style: TextStyle(
-                          fontSize: 15,
-                          color: Colors.red,
-                        ),
-                       ),
-                        Text('$confirmed',
-                        style: TextStyle(
-                          fontSize: 23,
-                          color: Colors.red,
-                        ),),
-                      ],
-                    ),
+                  CasesNumber(
+                    status: 'Confirmed',
+                    colour: Colors.red,
+                    number: confirmed,
                   ),
-                  Expanded(
-                    child: Column(
-                      children: <Widget>[
-                        Text('Active',
-                        style: TextStyle(
-                          fontSize: 15,
-                          color: Colors.blue,
-                        ),
-                        ),
-                        Text('$active',
-                        style: TextStyle(
-                          fontSize: 23,
-                          color: Colors.blue,
-                        ),),
-                      ],
-                    ),
+                  CasesNumber(
+                    status: 'Active',
+                    colour: Colors.blue,
+                    number: active,
                   ),
-                  Expanded(
-                    child: Column(
-                      children: <Widget>[
-                        Text('Recovered',
-                          style: TextStyle(
-                              fontSize: 15,
-                            color: Colors.green,
-                          ),
-                        ),
-                        Text('$recovered',
-                        style: TextStyle(
-                          fontSize: 23,
-                          color: Colors.green,
-                        ),),
-                      ],
-                    ),
+                  CasesNumber(
+                    status: 'Recovered',
+                    colour: Colors.green,
+                    number: recovered,
                   ),
-                  Expanded(
-                    child: Column(
-                      children: <Widget>[
-                        Text('Deceased',
-                        style: TextStyle(
-                          fontSize: 15,
-                          color: Colors.grey,
-                        ),
-                       ),
-                        Text('$deceased',
-                        style: TextStyle(
-                          fontSize: 23,
-                          color: Colors.grey,
-                        ),)
-                      ],
-                    ),
+                  CasesNumber(
+                    status: 'Deceased',
+                    colour: Colors.grey,
+                    number: deceased,
                   ),
                 ],
               ),
             ],
           ),
         ),
+      ),
+    ) ;
+  }
+}
+
+class CasesNumber extends StatelessWidget {
+  CasesNumber({this.status, this.colour, @required this.number});
+  final status;
+  final colour;
+  final number;
+  @override
+  Widget build(BuildContext context) {
+    return Expanded(
+      child: Column(
+        children: <Widget>[
+          Text(
+            status,
+            style: TextStyle(
+              fontSize: 15,
+              color: colour,
+            ),
+          ),
+          Text(
+            number,
+            //Text('${deceased.toString().substring(0,1)+','+deceased.toString().substring(1,4)}',
+            style: TextStyle(
+              fontSize: 23,
+              color: colour,
+            ),
+          )
+        ],
       ),
     );
   }
