@@ -18,7 +18,10 @@ class _EssentialScreenState extends State<EssentialScreen> {
   Future<void> getLocation() async{
     try{
       Position position = await Geolocator().getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
-      print(position);
+      List p = await Geolocator().placemarkFromCoordinates(position.latitude,position.longitude);
+      Placemark place = p[0];
+      print(place.locality);
+      print(place.postalCode);
     }
     catch(e){
       print(e);
